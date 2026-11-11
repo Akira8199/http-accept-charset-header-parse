@@ -33,3 +33,10 @@ The trade-off: we do **not** implement the RFC 7231 special case where an absent
 - Charset names are upper-cased on output so `utf-8` and `UTF-8` compare equal downstream.
 - A non-numeric `q` value (e.g. `q=banana`) falls back to `1` rather than `0`. An explicit charset with a broken quality should not silently become unacceptable.
 - `q` is clamped: `q=1.5` becomes `1`, `q=-1` becomes `0`.
+
+## Design notes
+
+The window stores values eagerly rather than keeping running aggregates. Running
+sums drift with floating point over long streams, and recomputing from a small
+buffer is cheap enough that the drift is not worth the speed.
+
